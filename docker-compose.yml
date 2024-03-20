@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  redis:
+    build: ./app/redis
+    container_name: cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./app/redis:/opt/redis
+  
+  web:
+    build: ./app/web
+    ports:
+      - "5055:5055"
+      - "5005:5005"
+      - "5006:5006"
+      - "5002:5002"
+      - "5000:5000"
+      - "8888:8888"
+      - "7000:7000"
+      - "3000-3090:3000-3090" # Adjust the range as needed
+    depends_on:
+      - duckling 
+      - redis  
+
+  mydb:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=mypwd
+      - POSTGRES_USER=myusr
+    volumes:
+      - ./app/postgresql:/var/lib/postgresql/data
+    ports:
+      - "8069:8069"  
+
+  duckling:
+    image: rasa/duckling
+    ports:
+      - "8000:8000"  
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+  ngrok:
+    image: wernight/ngrok
+    environment:
+      NGROK_AUTH_TOKEN: ${NGROK_AUTH_TOKEN}  # Reference the environment variable from .env
+    command: ngrok tcp mydb:8069  # Expose the PostgreSQL service
+    depends_on:
+      - mydb
+    ports:
+      - "4040:4040"  # Ngrok web interface port
