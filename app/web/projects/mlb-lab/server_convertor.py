@@ -6,7 +6,7 @@ from flask import Flask, render_template, send_file, request, redirect, url_for
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='convertor_templates')
 
 # Directory containing Markdown files
 markdown_dir = "content"
