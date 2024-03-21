@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='admin_templates')
 
 # Define SQLite3 database file path
 DB_FILE_PATH = 'sqlite:///admin/mydb.db'
