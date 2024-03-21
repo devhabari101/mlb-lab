@@ -6,10 +6,10 @@ from server_convertor import app as main_app  # Importing app from server_conver
 if __name__ == '__main__':
     # Define functions to run each Flask app in a separate thread
     def run_main_app():
-        main_app.run(host="0.0.0.0", port=7000)
+        main_app.run(host="0.0.0.0", debug=True, port=7000)
 
     def run_admin_app():
-        admin_app.run(host="0.0.0.0", port=3000)
+        admin_app.run(host="0.0.0.0", debug=True, port=3000)
 
     # Create and start threads for each Flask app
     main_thread = Thread(target=run_main_app)
