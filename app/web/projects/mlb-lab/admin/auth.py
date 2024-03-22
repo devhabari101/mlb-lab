@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from sqlalchemy import create_engine, Column, Integer, String, Numeric
 from sqlalchemy.ext.declarative import declarative_base
