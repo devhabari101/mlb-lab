@@ -42,19 +42,58 @@ Base.metadata.create_all(engine)
 @login_manager.user_loader
 def load_user(user_id):
     return session.query(User).get(int(user_id))
-    
+
+# Registration form
+class RegistrationForm(FlaskForm):
+    first_name = StringField('First Name', validators=[InputRequired()])
+    last_name = StringField('Last Name', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    country = StringField('Country')
+    phone_number = StringField('Phone Number')
+    interest = SelectField('Interest', choices=[('technology', 'Technology'), ('finance', 'Finance'), ('entertainment', 'Entertainment')])
+    receive_newsletter = BooleanField('Receive Newsletter', default=True)
+    agree_terms_and_conditions = BooleanField('Agree to Terms and Conditions', default=False)
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8)])
+
+# Registration route
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        # Check if user with provided email already exists
+        if session.query(User).filter_by(email=form.email.data).first():
+            flash('Email address already registered.', 'error')
+        else:
+            # Create a new user instance
+            new_user = User(
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                email=form.email.data,
+                country=form.country.data,
+                phone_number=form.phone_number.data,
+                interest=form.interest.data,
+                receive_newsletter='yes' if form.receive_newsletter.data else 'no',
+                agree_terms_and_conditions=1 if form.agree_terms_and_conditions.data else 0,
+                password=generate_password_hash(form.password.data)
+            )
+            # Add the new user to the session and commit
+            session.add(new_user)
+            session.commit()
+            flash('Registration successful. Please log in.', 'success')
+            return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
 # Login route    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Check login credentials (e.g., username and password)
-        # If valid, load user and login
-        user = session.query(User).filter_by(username=request.form['username']).first()
+        # Check login credentials (e.g., email and password)
+        user = session.query(User).filter_by(email=request.form['email']).first()
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
             return redirect(url_for('dashboard'))  # Redirect to dashboard or any other route
         else:
-            flash('Invalid username or password', 'error')
+            flash('Invalid email or password', 'error')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -62,7 +101,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-    
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
