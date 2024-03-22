@@ -8,8 +8,11 @@ from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import InputRequired, Email, Length
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
+from dotenv import load_dotenv
 import os
 
+# Load environment variables from the .env file
+load_dotenv()
 
 app = Flask(__name__, template_folder='admin_templates')
 # Set secret key using the SECRET_KEY environment variable
