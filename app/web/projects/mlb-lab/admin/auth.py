@@ -13,7 +13,7 @@ import os
 
 app = Flask(__name__, template_folder='admin_templates')
 # Set secret key using the SECRET_KEY environment variable
-app.secret_key = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 csrf = CSRFProtect(app)  # Initialize CSRF protection
 login_manager = LoginManager(app)
 
