@@ -7,12 +7,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import InputRequired, Email, Length
 from flask_wtf import FlaskForm
+from flask_wtf.csrf import CSRFProtect
 import os
 
 
 app = Flask(__name__, template_folder='admin_templates')
 # Set secret key using the SECRET_KEY environment variable
 app.secret_key = os.environ.get('SECRET_KEY')
+csrf = CSRFProtect(app)  # Initialize CSRF protection
 login_manager = LoginManager(app)
 
 # Define SQLite3 database file path
