@@ -1,8 +1,12 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
-from sqlalchemy import create_engine, Column, Integer, String, Numeric
+from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from werkzeug.security import generate_password_hash, check_password_hash
+from wtforms import StringField, PasswordField, BooleanField, SelectField
+from wtforms.validators import InputRequired, Email, Length
+from flask_wtf import FlaskForm
 import os
 
 
@@ -30,7 +34,7 @@ class User(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     country = Column(String)
-    phone_number = Column(Numeric)
+    phone_number = Column(String) #change for simplicity
     interest = Column(String)
     receive_newsletter = Column(String, default='yes')
     agree_terms_and_conditions = Column(Integer, default=0)
