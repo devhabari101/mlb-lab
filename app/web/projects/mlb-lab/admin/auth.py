@@ -7,7 +7,8 @@ import os
 
 
 app = Flask(__name__, template_folder='admin_templates')
-app.secret_key = 'your_secret_key'
+# Set secret key using the SECRET_KEY environment variable
+app.secret_key = os.environ.get('SECRET_KEY')
 login_manager = LoginManager(app)
 
 # Define SQLite3 database file path
