@@ -2,9 +2,11 @@ import os
 import markdown
 import json
 import re
-from flask import Flask, render_template, send_file, request, redirect, url_for
+from flask import Flask, render_template, send_file, request, redirect, url_for, request
+from flask_login import current_user, login_required
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from admin.auth import User
 
 app = Flask(__name__, template_folder='convertor_templates')
 
@@ -12,15 +14,15 @@ app = Flask(__name__, template_folder='convertor_templates')
 markdown_dir = "content"
 json_output_file = "markdown_output.json"
 
-# Function to save form data to Markdown file
-def save_to_markdown(data):
+# Function to save form data to Markdown file with user_id
+def save_to_markdown(data, user_id):
     # Create a filename based on current timestamp or unique identifier
     filename = os.path.join(markdown_dir, f"{data['title']}.md")
     # Write form data to Markdown file
     with open(filename, "w") as file:
         file.write(f"---\n")
         for key, value in data.items():
-            file.write(f"{key}: {value}\n")
+            file.write(f"user_id: {user_id}\n")  # Add user_id to metadata
         file.write(f"---\n\n{data['content']}")
         
 # Function to convert Markdown to HTML and update JSON file
@@ -75,18 +77,21 @@ def index():
     
 # Route to render the form
 @app.route("/admin", methods=["GET"])
+@login_required  # Protect the route with login_required decorator
 def form_admin():
     return render_template("form.html")
 
 # Route to handle form submission
 @app.route("/submit", methods=["POST"])
+@login_required  # Protect the route with login_required decorator
 def submit_form():
     form_data = {
         "title": request.form.get("title"),
         "category": request.form.get("category"),
         "content": request.form.get("content")
     }
-    save_to_markdown(form_data)
+    user_id = current_user.id  # Get the user ID of the current authenticated user
+    save_to_markdown(form_data, user_id)  # Pass user_id to save_to_markdown
     return redirect(url_for("index"))   
 
 @app.route('/markdown_output.json')
