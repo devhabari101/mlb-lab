@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, PasswordField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SelectField, SubmitField
 from wtforms.validators import InputRequired, Email, Length
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
@@ -91,7 +91,13 @@ def register():
             flash('Registration successful. Please log in.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html', form=form)
-
+    
+# Define the LoginForm class
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    password = PasswordField('Password', validators=[InputRequired()])
+    submit = SubmitField('Login')
+    
 # Login route    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
