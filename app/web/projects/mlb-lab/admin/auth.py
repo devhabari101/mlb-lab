@@ -102,6 +102,7 @@ class LoginForm(FlaskForm):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()  # Assuming you have a LoginForm defined
+    if form.validate_on_submit():
     if request.method == 'POST':
         # Check login credentials (e.g., email and password)
         user = session.query(User).filter_by(email=request.form['email']).first()
