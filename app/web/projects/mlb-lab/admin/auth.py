@@ -44,6 +44,20 @@ class User(Base):
     receive_newsletter = Column(String, default='yes')
     agree_terms_and_conditions = Column(Integer, default=0)
     password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+
+# Add a method to satisfy Flask-Login requirements
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return self.is_active
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)
     
 # Create tables
 Base.metadata.create_all(engine)
