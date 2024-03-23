@@ -98,19 +98,25 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     submit = SubmitField('Login')
     
-# Login route    
+# Login route       
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()  # Assuming you have a LoginForm defined
     if form.validate_on_submit():
         # Check login credentials (e.g., email and password)
+        print("Email:", form.email.data)  # Debugging print
+        print("Password:", form.password.data)  # Debugging print
         user = session.query(User).filter_by(email=form.email.data).first()
+        print("User:", user)  # Debugging print
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
+            print("Login successful!")  # Debugging print
             return redirect(url_for('dashboard'))  # Redirect to dashboard or any other route
         else:
             flash('Invalid email or password', 'error')
+            print("Login failed!")  # Debugging print
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 @login_required
