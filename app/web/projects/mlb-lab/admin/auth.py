@@ -32,7 +32,7 @@ session = Session()
 Base = declarative_base()
 
 # Define a User model
-class User(Base):
+class User(Base, UserMixin):  # Add UserMixin to your User class:
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     first_name = Column(String, nullable=False)
@@ -46,13 +46,15 @@ class User(Base):
     password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
-# Add a method to satisfy Flask-Login requirements
+ # Add property decorators to satisfy Flask-Login requirements
+    @property
     def is_authenticated(self):
         return True
-
+        
+    @property
     def is_active(self):
         return self.is_active
-
+    @property
     def is_anonymous(self):
         return False
 
