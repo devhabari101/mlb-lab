@@ -95,6 +95,7 @@ def register():
 # Login route    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()  # Assuming you have a LoginForm defined
     if request.method == 'POST':
         # Check login credentials (e.g., email and password)
         user = session.query(User).filter_by(email=request.form['email']).first()
