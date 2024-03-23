@@ -103,15 +103,14 @@ class LoginForm(FlaskForm):
 def login():
     form = LoginForm()  # Assuming you have a LoginForm defined
     if form.validate_on_submit():
-    if request.method == 'POST':
         # Check login credentials (e.g., email and password)
-        user = session.query(User).filter_by(email=request.form['email']).first()
-        if user and check_password_hash(user.password, request.form['password']):
+        user = session.query(User).filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             return redirect(url_for('dashboard'))  # Redirect to dashboard or any other route
         else:
             flash('Invalid email or password', 'error')
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
