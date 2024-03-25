@@ -149,5 +149,11 @@ def users():
     users = session.query(User).all()
     return render_template('users.html', users=users)
 
+# Handle unauthorized access by redirecting users to the login page:
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
