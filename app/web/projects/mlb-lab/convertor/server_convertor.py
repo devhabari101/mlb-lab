@@ -6,6 +6,7 @@ from flask import Flask, render_template, send_file, request, redirect, url_for
 from flask_login import current_user, login_required, unauthorized
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from admin.auth import app as main_app  # Importing app from auth.py
 
 
 app = Flask(__name__, template_folder='convertor_templates')
