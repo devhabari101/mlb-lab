@@ -3,7 +3,7 @@ import markdown
 import json
 import re
 from flask import Flask, render_template, send_file, request, redirect, url_for, request
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, unauthorized
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -97,6 +97,11 @@ def submit_form():
 @app.route('/markdown_output.json')
 def get_markdown_output():
     return send_file('markdown_output.json')
+
+# Handle unauthorized access by redirecting users to the login page:
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
 
 if __name__ == "__main__":
     # Initial conversion from Markdown to JSON
