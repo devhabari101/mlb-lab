@@ -2,7 +2,7 @@ import os
 import markdown
 import json
 import re
-from flask import Flask, render_template, send_file, request, redirect, url_for, request
+from flask import Flask, render_template, send_file, request, redirect, url_for
 from flask_login import current_user, login_required, unauthorized
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
