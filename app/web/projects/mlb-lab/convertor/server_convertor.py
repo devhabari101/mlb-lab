@@ -3,13 +3,14 @@ import markdown
 import json
 import re
 from flask import Flask, render_template, send_file, request, redirect, url_for
-from flask_login import current_user, login_required, unauthorized
+from flask_login import current_user, login_required, LoginManager
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from admin.auth import app as main_app  # Importing app from auth.py
 
-
 app = Flask(__name__, template_folder='convertor_templates')
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 # Directory containing Markdown files
 markdown_dir = "content"
@@ -25,7 +26,7 @@ def save_to_markdown(data, user_id):
         for key, value in data.items():
             file.write(f"user_id: {user_id}\n")  # Add user_id to metadata
         file.write(f"---\n\n{data['content']}")
-        
+
 # Function to convert Markdown to HTML and update JSON file
 def convert_markdown_to_json():
     json_data_list = []
@@ -64,18 +65,11 @@ class MarkdownFileEventHandler(FileSystemEventHandler):
             if event.src_path.endswith(".md"):
                 convert_markdown_to_json()
 
-# Flask route to serve the JSON data
-#@app.route("/data", methods=["GET"])
-#def get_data():
-#    with open(json_output_file, "r", encoding="utf-8") as json_file:
-#        data = json.load(json_file)
-#    return json.dumps(data)
-
 # Flask route to serve the HTML content
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
-    
+
 # Route to render the form
 @app.route("/admin", methods=["GET"])
 @login_required  # Protect the route with login_required decorator
@@ -93,7 +87,7 @@ def submit_form():
     }
     user_id = current_user.id  # Get the user ID of the current authenticated user
     save_to_markdown(form_data, user_id)  # Pass user_id to save_to_markdown
-    return redirect(url_for("index"))   
+    return redirect(url_for("index"))
 
 @app.route('/markdown_output.json')
 def get_markdown_output():
